@@ -43,6 +43,8 @@ Vagrant.configure(2) do |config|
             chef.add_recipe 'openstack::controller'
         end
 
+        cn.vm.provision "shell", inline: 'sudo -s /bin/sh -c "keystone-manage db_sync" keystone'
+
     end
 
     # config.vm.define "compute_node1" do |cn|
