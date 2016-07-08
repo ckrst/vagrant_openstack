@@ -129,15 +129,19 @@ Vagrant.configure(2) do |config|
             shell.env = admin_env
         end
 
-        #
-        # # NOVA
-        # cn.vm.provision "shell", inline: 'sudo -s /bin/sh -c "nova-manage api_db sync" nova'
-        # cn.vm.provision "shell", inline: 'sudo -s /bin/sh -c "nova-manage db sync" nova'
-        # cn.vm.provision "shell" do |shell|
-        #     shell.path = "scripts/nova.sh"
-        #     shell.privileged = false
-        #     shell.env = admin_env
-        # end
+        # NOVA
+        cn.vm.provision "shell" do |shell|
+            shell.path = "scripts/nova.sh"
+            shell.privileged = false
+            shell.env = admin_env
+        end
+        cn.vm.provision "shell", inline: 'sudo -s /bin/sh -c "nova-manage api_db sync" nova'
+        cn.vm.provision "shell", inline: 'sudo -s /bin/sh -c "nova-manage db sync" nova'
+        cn.vm.provision "shell", inline: 'sudo service nova-api restart'
+        cn.vm.provision "shell", inline: 'sudo service nova-consoleauth restart'
+        cn.vm.provision "shell", inline: 'sudo service nova-scheduler restart'
+        cn.vm.provision "shell", inline: 'sudo service nova-conductor restart'
+        cn.vm.provision "shell", inline: 'sudo service nova-novncproxy restart'
         #
         # # NEUTRON
         # cn.vm.provision "shell" do |shell|
