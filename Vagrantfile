@@ -80,6 +80,8 @@ Vagrant.configure(2) do |config|
 
         # KEYSTONE
         cn.vm.provision "shell", inline: 'sudo -s /bin/sh -c "keystone-manage db_sync" keystone'
+        cn.vm.provision "shell", inline: 'sudo keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone'
+        cn.vm.provision "shell", inline: 'sudo service apache2 restart'
         cn.vm.provision "shell" do |shell|
             shell.path = "scripts/keystone.sh"
             shell.privileged = false
@@ -89,29 +91,44 @@ Vagrant.configure(2) do |config|
                 "OS_IDENTITY_API_VERSION"   => 3
             }
         end
+        #cn.vm.provision "shell", inline: 'openstack --os-auth-url http://controller:35357/v3 --os-project-domain-name default --os-user-domain-name default --os-project-name admin --os-username admin token issue'
+        cn.vm.provision "shell" do |shell|
+            shell.inline = "openstack token issue"
+            shell.privileged = false
+            shell.env = admin_env
+        end
+        #cn.vm.provision "shell", inline: 'openstack --os-auth-url http://controller:5000/v3 --os-project-domain-name default --os-user-domain-name default --os-project-name demo --os-username demo token issue'
+        cn.vm.provision "shell" do |shell|
+            shell.inline = "openstack token issue"
+            shell.privileged = false
+            shell.env = user_env
+        end
 
 
         # GLANCE
 
-        # # glance endpoints
-        # cn.vm.provision "shell" do |shell|
-        #     shell.path = "scripts/glance.sh"
-        #     shell.privileged = false
-        #     shell.env = admin_env
-        # end
-        #
-        # cn.vm.provision "shell", inline: 'sudo -s /bin/sh -c "glance-manage db_sync" glance'
-        # # Download ubuntu image
-        # cn.vm.provision "shell" do |shell|
-        #     shell.inline = "cd /home/vagrant && wget https://cloud-images.ubuntu.com/trusty/current/trusty-server-cloudimg-amd64-disk1.img"
-        #     shell.privileged = false
-        # end
-        # # Import ubuntu on glance
-        # cn.vm.provision "shell" do |shell|
-        #     shell.inline = 'openstack image create "ubuntu" --file trusty-server-cloudimg-amd64-disk1.img --disk-format qcow2 --container-format bare --public'
-        #     shell.privileged = false
-        #     shell.env = admin_env
-        # end
+        # glance endpoints
+        cn.vm.provision "shell" do |shell|
+            shell.path = "scripts/glance.sh"
+            shell.privileged = false
+            shell.env = admin_env
+        end
+        cn.vm.provision "shell", inline: 'sudo -s /bin/sh -c "glance-manage db_sync" glance'
+        cn.vm.provision "shell", inline: 'sudo service glance-registry restart'
+        cn.vm.provision "shell", inline: 'sudo service glance-api restart'
+        # Download ubuntu image
+        cn.vm.provision "shell" do |shell|
+            shell.inline = "cd /home/vagrant && wget https://cloud-images.ubuntu.com/trusty/current/trusty-server-cloudimg-amd64-disk1.img"
+            shell.privileged = false
+            shell.env = admin_env
+        end
+        # Import ubuntu on glance
+        cn.vm.provision "shell" do |shell|
+            shell.inline = 'openstack image create "ubuntu" --file trusty-server-cloudimg-amd64-disk1.img --disk-format qcow2 --container-format bare --public'
+            shell.privileged = false
+            shell.env = admin_env
+        end
+
         #
         # # NOVA
         # cn.vm.provision "shell", inline: 'sudo -s /bin/sh -c "nova-manage api_db sync" nova'
