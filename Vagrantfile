@@ -76,6 +76,7 @@ Vagrant.configure(2) do |config|
             chef.add_recipe 'openstack::glance'
             chef.add_recipe 'openstack::nova'
             chef.add_recipe 'openstack::neutron'
+            chef.add_recipe 'openstack::horizon'
         end
 
         # KEYSTONE
@@ -142,15 +143,23 @@ Vagrant.configure(2) do |config|
         cn.vm.provision "shell", inline: 'sudo service nova-scheduler restart'
         cn.vm.provision "shell", inline: 'sudo service nova-conductor restart'
         cn.vm.provision "shell", inline: 'sudo service nova-novncproxy restart'
-        #
-        # # NEUTRON
-        # cn.vm.provision "shell" do |shell|
-        #     shell.path = "scripts/neutron.sh"
-        #     shell.privileged = false
-        #     shell.env = admin_env
-        # end
-        # cn.vm.provision "shell", inline: 'su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head" neutron'
 
+        # NEUTRON
+        cn.vm.provision "shell" do |shell|
+            shell.path = "scripts/neutron.sh"
+            shell.privileged = false
+            shell.env = admin_env
+        end
+        cn.vm.provision "shell", inline: 'sudo -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head" neutron'
+        cn.vm.provision "shell", inline: 'sudo service nova-api restart'
+        cn.vm.provision "shell", inline: 'sudo service neutron-server restart'
+        cn.vm.provision "shell", inline: 'sudo service neutron-linuxbridge-agent restart'
+        cn.vm.provision "shell", inline: 'sudo service neutron-dhcp-agent restart'
+        cn.vm.provision "shell", inline: 'sudo service neutron-metadata-agent restart'
+        cn.vm.provision "shell", inline: 'sudo service neutron-l3-agent restart'
+
+        # Horizon
+        cn.vm.provision "shell", inline: 'sudo service apache2 restart'
     end
 
     # config.vm.define "compute_node1" do |cn|
