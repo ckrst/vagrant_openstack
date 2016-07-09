@@ -70,40 +70,38 @@ Vagrant.configure(2) do |config|
             chef.add_recipe 'mongodb'
             chef.add_recipe 'rabbitmq'
             chef.add_recipe 'memcached'
-            chef.add_recipe 'openstack::controller'
+            chef.add_recipe 'openstack::controller_installer'
 
-            chef.add_recipe 'openstack::keystone'
-            chef.add_recipe 'openstack::glance'
-            chef.add_recipe 'openstack::nova'
-            chef.add_recipe 'openstack::neutron'
-            chef.add_recipe 'openstack::horizon'
+            # chef.add_recipe 'openstack::keystone'
+            # chef.add_recipe 'openstack::glance'
+            # chef.add_recipe 'openstack::nova'
+            # chef.add_recipe 'openstack::neutron'
+            # chef.add_recipe 'openstack::horizon'
         end
 
         # KEYSTONE
-        cn.vm.provision "shell", inline: 'sudo -s /bin/sh -c "keystone-manage db_sync" keystone'
-        cn.vm.provision "shell", inline: 'sudo keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone'
-        cn.vm.provision "shell", inline: 'sudo service apache2 restart'
-        cn.vm.provision "shell" do |shell|
-            shell.path = "scripts/keystone.sh"
-            shell.privileged = false
-            shell.env = {
-                "OS_TOKEN"                  => "71e444e5726be697906c",
-                "OS_URL"                    => "http://controller:35357/v3",
-                "OS_IDENTITY_API_VERSION"   => 3
-            }
-        end
-        #cn.vm.provision "shell", inline: 'openstack --os-auth-url http://controller:35357/v3 --os-project-domain-name default --os-user-domain-name default --os-project-name admin --os-username admin token issue'
-        cn.vm.provision "shell" do |shell|
-            shell.inline = "openstack token issue"
-            shell.privileged = false
-            shell.env = admin_env
-        end
-        #cn.vm.provision "shell", inline: 'openstack --os-auth-url http://controller:5000/v3 --os-project-domain-name default --os-user-domain-name default --os-project-name demo --os-username demo token issue'
-        cn.vm.provision "shell" do |shell|
-            shell.inline = "openstack token issue"
-            shell.privileged = false
-            shell.env = user_env
-        end
+        # cn.vm.provision "shell", inline: 'sudo -s /bin/sh -c "keystone-manage db_sync" keystone'
+        # cn.vm.provision "shell", inline: 'sudo keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone'
+        # cn.vm.provision "shell", inline: 'sudo service apache2 restart'
+        # cn.vm.provision "shell" do |shell|
+        #     shell.path = "scripts/keystone.sh"
+        #     shell.privileged = false
+        #     shell.env = {
+        #         "OS_TOKEN"                  => "71e444e5726be697906c",
+        #         "OS_URL"                    => "http://controller:35357/v3",
+        #         "OS_IDENTITY_API_VERSION"   => 3
+        #     }
+        # end
+        # cn.vm.provision "shell" do |shell|
+        #     shell.inline = "openstack token issue"
+        #     shell.privileged = false
+        #     shell.env = admin_env
+        # end
+        # cn.vm.provision "shell" do |shell|
+        #     shell.inline = "openstack token issue"
+        #     shell.privileged = false
+        #     shell.env = user_env
+        # end
 
 
         # GLANCE
@@ -162,23 +160,23 @@ Vagrant.configure(2) do |config|
         cn.vm.provision "shell", inline: 'sudo service apache2 restart'
     end
 
-    # config.vm.define "compute_node1" do |cn|
-    #     cn.vm.name "compute1"
-    #
-    #     cn.vm.network "private_network",
-    #         ip: "10.0.0.31",
-    #         netmask: "255.255.255.0"
-    #
-    #     cn.vm.provider "virtualbox" do |vb|
-    #         vb.memory = "1024"
-    #     end
-    #
-    #     cn.vm.provision "chef_solo" do |chef|
-    #         chef.cookbooks_path = ['chef/cookbooks']
-    #         chef.add_recipe 'chrony'
-    #         chef.add_recipe 'openstack:compute'
-    #     end
-    # end
+    config.vm.define "compute_node1" do |cn|
+        cn.vm.hostname="compute1"
+
+        cn.vm.network "private_network",
+            ip: "10.0.0.31",
+            netmask: "255.255.255.0"
+
+        cn.vm.provider "virtualbox" do |vb|
+            vb.memory = "1024"
+        end
+
+        cn.vm.provision "chef_solo" do |chef|
+            chef.cookbooks_path = ['chef/cookbooks']
+            chef.add_recipe 'chrony'
+            chef.add_recipe 'openstack:compute_installer'
+        end
+    end
 
     # config.vm.define "block_storage1" do |bs|
     #     cn.vm.name "block1"
