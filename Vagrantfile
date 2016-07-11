@@ -73,7 +73,7 @@ Vagrant.configure(2) do |config|
             chef.add_recipe 'openstack::controller_installer'
 
         end
-        
+
     end
 
     config.vm.define "compute_node1" do |cn|
@@ -87,10 +87,12 @@ Vagrant.configure(2) do |config|
             vb.memory = "1024"
         end
 
+        cn.vm.provision "shell", path: "scripts/apt-cleaner.sh"
+
         cn.vm.provision "chef_solo" do |chef|
             chef.cookbooks_path = ['chef/cookbooks']
             chef.add_recipe 'chrony'
-            chef.add_recipe 'openstack:compute_installer'
+            chef.add_recipe 'openstack::compute_installer'
         end
     end
 
