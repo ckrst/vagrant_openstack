@@ -69,7 +69,7 @@ Vagrant.configure(2) do |config|
             chef.add_recipe 'chrony'
             chef.add_recipe 'mongodb'
             chef.add_recipe 'rabbitmq'
-            chef.add_recipe 'memcached'
+            # chef.add_recipe 'memcached'
             chef.add_recipe 'openstack::controller_installer'
 
         end
