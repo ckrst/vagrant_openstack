@@ -85,7 +85,7 @@ Vagrant.configure(2) do |config|
             netmask: "255.255.255.0"
 
         cn.vm.provider "virtualbox" do |vb|
-            vb.memory = "1024"
+            vb.memory = "16192"
         end
 
         cn.vm.provision "shell", path: "scripts/apt-cleaner.sh"
