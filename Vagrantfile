@@ -51,6 +51,7 @@ Vagrant.configure(2) do |config|
 
         cn.vm.provider "virtualbox" do |vb|
             vb.memory = "4096"
+            # vb.customize ["modifyhd", "disk id", "--resize", "81920"]
         end
 
         cn.vm.provision "shell", path: "scripts/apt-cleaner.sh"
