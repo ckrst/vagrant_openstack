@@ -35,15 +35,17 @@ Vagrant.configure(2) do |config|
         cn.vm.network "private_network",
             ip: "10.0.0.11",
             netmask: "255.255.255.0"
-        cn.vm.network "forwarded_port", guest: 80, host: 8080
-        cn.vm.network "forwarded_port", guest: 3306, host: 3306
-        cn.vm.network "forwarded_port", guest: 5000, host: 5000
-        cn.vm.network "forwarded_port", guest: 6080, host: 6080
-        cn.vm.network "forwarded_port", guest: 8774, host: 8774
-        cn.vm.network "forwarded_port", guest: 9292, host: 9292
-        cn.vm.network "forwarded_port", guest: 9696, host: 9696
-        cn.vm.network "forwarded_port", guest: 11211, host: 11211
-        cn.vm.network "forwarded_port", guest: 35357, host: 35357
+        config.vm.network "public_network",
+            bridge: "eth1"
+        cn.vm.network "forwarded_port", guest: 80,      host: 8080
+        cn.vm.network "forwarded_port", guest: 3306,    host: 3306
+        cn.vm.network "forwarded_port", guest: 5000,    host: 5000
+        cn.vm.network "forwarded_port", guest: 6080,    host: 6080
+        cn.vm.network "forwarded_port", guest: 8774,    host: 8774
+        cn.vm.network "forwarded_port", guest: 9292,    host: 9292
+        cn.vm.network "forwarded_port", guest: 9696,    host: 9696
+        cn.vm.network "forwarded_port", guest: 11211,   host: 11211
+        cn.vm.network "forwarded_port", guest: 35357,   host: 35357
 
         cn.vm.provider "virtualbox" do |vb|
             vb.memory = "4096"
@@ -83,6 +85,8 @@ Vagrant.configure(2) do |config|
         cn.vm.network "private_network",
             ip: "10.0.0.31",
             netmask: "255.255.255.0"
+        config.vm.network "public_network",
+            bridge: "eth1"
 
         cn.vm.provider "virtualbox" do |vb|
             vb.memory = "1024"
