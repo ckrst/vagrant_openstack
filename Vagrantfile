@@ -85,11 +85,13 @@ Vagrant.configure(2) do |config|
         cn.vm.network "private_network",
             ip: "10.0.0.31",
             netmask: "255.255.255.0"
-        config.vm.network "public_network",
+        cn.vm.network "public_network",
             bridge: "eth1"
+
 
         cn.vm.provider "virtualbox" do |vb|
             vb.memory = "16192"
+            vb.cpus = 4
         end
 
         cn.vm.provision "shell", path: "scripts/apt-cleaner.sh"
