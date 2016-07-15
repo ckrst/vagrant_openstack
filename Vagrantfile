@@ -1,12 +1,16 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+admin_user = "admin"
+admin_password = "secret"
+
+
 admin_env = {
     "OS_PROJECT_DOMAIN_NAME" => "default",
     "OS_USER_DOMAIN_NAME" => "default",
     "OS_PROJECT_NAME" => "admin",
-    "OS_USERNAME" => "admin",
-    "OS_PASSWORD" => "secret",
+    "OS_USERNAME" => admin_user,
+    "OS_PASSWORD" => admin_password,
     "OS_AUTH_URL" => "http://controller:35357/v3",
     "OS_IDENTITY_API_VERSION" => 3,
     "OS_IMAGE_API_VERSION" => 2
@@ -28,7 +32,7 @@ Vagrant.configure(2) do |config|
     #config.vm.box = "vinik/ubuntu"
     config.vm.box = "bento/ubuntu-14.04"
 
-    config.vm.define "controller_node" do |cn|
+    config.vm.define "controller" do |cn|
 
         cn.vm.hostname="controller"
 
@@ -61,6 +65,11 @@ Vagrant.configure(2) do |config|
             chef.nodes_path = ['chef/nodes']
 
             chef.json = {
+                "openstack" => {
+                    "admin_user" => admin_user,
+                    "admin_password" => admin_password
+                },
+
                 "mongodb" => {
                     "config" => {
                         "bind-ip" => "10.0.0.11",
@@ -82,7 +91,7 @@ Vagrant.configure(2) do |config|
 
     end
 
-    config.vm.define "compute_node1" do |cn|
+    config.vm.define "compute1" do |cn|
         cn.vm.hostname="compute1"
 
         cn.vm.network "private_network",
