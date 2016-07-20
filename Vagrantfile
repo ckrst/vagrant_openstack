@@ -39,9 +39,9 @@ Vagrant.configure(2) do |config|
         cn.vm.network "private_network",
             ip: "10.0.0.11",
             netmask: "255.255.255.0"
-        # config.vm.network "public_network",
-        #     bridge: "eth1",
-        #     nic_type: "virtio"
+        config.vm.network "public_network",
+            bridge: "eth1",
+            #nic_type: "virtio"
 
         cn.vm.network "forwarded_port", guest: 80,      host: 8080
         cn.vm.network "forwarded_port", guest: 3306,    host: 3306
